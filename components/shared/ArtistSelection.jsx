@@ -1,59 +1,141 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Combobox } from '@/components/ui/combobox';
+import { Check, ChevronsUpDown, Loader, LoaderCircle, LoaderIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
+import { CommandLoading } from "cmdk"
+import { querySpotifyArtists } from "@/lib/spotify"
+import Image from "next/image"
+import Link from "next/link"
+
+const frameworks = [
+  {
+    value: "next.js",
+    label: "Next.js",
+  },
+  {
+    value: "sveltekit",
+    label: "SvelteKit",
+  },
+  {
+    value: "nuxt.js",
+    label: "Nuxt.js",
+  },
+  {
+    value: "remix",
+    label: "Remix",
+  },
+  {
+    value: "astro",
+    label: "Astro",
+  },
+]
 
 const ArtistSelection = () => {
-  const [query, setQuery] = useState('');
-  const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState("")
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  async function fetchArtists(searchTerm) {
-    if (!searchTerm) {
-      setOptions([]);
-      return;
+  useEffect(() => {
+    async function fetchResults() {
+      if (query === "") return
+
+      setIsLoading(true)
+
+      const artists = await querySpotifyArtists(query)
+
+      setResults(artists)
+      setIsLoading(false)
     }
 
-    setLoading(true);
+    fetchResults()
+  }, [query])
 
-    try {
-      const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=artist.search&artist=${encodeURIComponent(
-          searchTerm
-        )}&api_key=${process.env.NEXT_PUBLIC_LASTFM_API_KEY}&format=json`
-      );
+  console.log(value);
 
-      const data = await response.json();
-
-      if (data.results?.artistmatches?.artist) {
-        const artists = data.results.artistmatches.artist.map((artist) => ({
-          value: artist.name,
-          label: artist.name,
-        }));
-        setOptions(artists);
-      } else {
-        setOptions([]);
-      }
-    } catch (error) {
-      console.error('Error fetching artists:', error);
-      setOptions([]);
-    }
-
-    setLoading(false);
-  }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <Combobox
-        placeholder="Search for an artist..."
-        value={query}
-        onChange={(value) => setQuery(value)}
-        onInputChange={(value) => fetchArtists(value)}
-        options={options}
-        loading={loading}
-      />
-    </div>
-  );
-};
+    <div className="flex flex-col gap-4 items-center mt-8">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[300px] justify-between"
+          >
+            {value
+              ?
+              value.name
+              : "Select an artist..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[300px] p-0">
+          <Command shouldFilter={false}>
+            <CommandInput
+              placeholder="Search artist..."
+              value={query}
+              onValueChange={(e) => setQuery(e)}
+            />
+            <CommandList>
+              {isLoading ? (
+                <CommandLoading className="py-4 flex justify-center">
+                  <LoaderCircle className="animate-spin" />
+                </CommandLoading>
+              ) : (
+                <>
+                  <CommandEmpty>No artist found.</CommandEmpty>
+                  <CommandGroup>
+                    {results.map((artist, index) => (
+                      <CommandItem
+                        key={artist.id + index}
+                        value={artist}
+                        onSelect={() => {
+                          setValue(artist === value ? "" : artist)
+                          setOpen(false)
+                        }}
+                      >
+                        {/* <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          value === artist.name ? "opacity-100" : "opacity-0"
+                        )}
+                      /> */}
+                        <Image height={32} width={32} src={artist.image ? artist.image : ''} className="aspect-square object-cover rounded-[0.3rem]" alt={artist.name} />
+                        {artist.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </>
+              )}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
 
-export default ArtistSelection;
+      <Link href={value ? `/quiz/${value.id}` : '#'} aria-disabled={!value} className={`${!value && 'cursor-not-allowed pointer-events-none'}`}>
+        <Button disabled={!value}>Start Quiz</Button>
+      </Link>
+    </div>
+  )
+}
+
+export default ArtistSelection

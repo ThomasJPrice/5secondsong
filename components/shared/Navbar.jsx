@@ -5,7 +5,7 @@ import DarkModeToggle from "./DarkModeToggle"
 
 const Navbar = () => {
   return (
-    <nav className="container py-2 flex justify-between items-center">
+    <nav className="container py-4 flex justify-between items-center">
       {/* left */}
       <ul className="flex">
         <Link href='/'>

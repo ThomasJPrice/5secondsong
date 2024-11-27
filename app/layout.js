@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
               {children}
             </main>
 
-            <footer className="container">
+            <footer className="container pt-4">
               <div className="w-full h-[1px] bg-primary"></div>
 
               <div className="py-2 flex items-center justify-between">

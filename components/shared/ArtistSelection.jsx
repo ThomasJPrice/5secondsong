@@ -68,9 +68,6 @@ const ArtistSelection = () => {
     fetchResults()
   }, [query])
 
-  console.log(value);
-
-
   return (
     <div className="flex flex-col gap-4 items-center mt-8">
       <Popover open={open} onOpenChange={setOpen}>

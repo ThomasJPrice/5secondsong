@@ -4,13 +4,14 @@ import Image from "next/image"
 import { useState } from "react"
 import { Button } from "../ui/button"
 import { motion, AnimatePresence } from "framer-motion"
+import MusicPlayer from "./MusicPlayer"
 
 const QuizContainer = ({ artistDetails, quizData }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(5000)
+  const [volume, setVolume] = useState(1)
 
   const [score, setScore] = useState(0)
 
@@ -18,7 +19,6 @@ const QuizContainer = ({ artistDetails, quizData }) => {
     if (selectedAnswer && currentQuestionIndex < 9) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
-      setTimeLeft(5000)
       setIsPlaying(false)
       
       if (selectedAnswer.correct) {
@@ -26,9 +26,6 @@ const QuizContainer = ({ artistDetails, quizData }) => {
       }
     }
   }
-
-  console.log(score);
-  
 
   return (
     <div>
@@ -41,7 +38,7 @@ const QuizContainer = ({ artistDetails, quizData }) => {
         </div>
       </div>
 
-      <div className="max-w-[500px] mx-auto py-4 my-8 relative w-full overflow-hidden">
+      <div className="max-w-[500px] mx-auto py-4 my-8 relative w-full">
         {/* questions go here */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -52,16 +49,20 @@ const QuizContainer = ({ artistDetails, quizData }) => {
             transition={{ duration: 0.5 }}
           >
             {/* music player placeholder */}
-            <div className="bg-gray-200 h-12 mb-6 rounded flex items-center justify-center">
-              Music Player Placeholder
-            </div>
+            <MusicPlayer
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              trackSrc={quizData[currentQuestionIndex].trackPreview}
+              volume={volume}
+              setVolume={setVolume}
+            />
 
             {/* options */}
             <ul className="grid grid-cols-3 gap-4">
               {quizData[currentQuestionIndex].options.map((option, index) => (
                 <li
                   key={option + index}
-                  className="cursor-pointer transition-all duration-300 hover:scale-101"
+                  className="cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                   onClick={() => setSelectedAnswer(option)}
                 >
                   <div className="relative">

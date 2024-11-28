@@ -60,3 +60,16 @@
     @apply !max-w-[1024px] !px-4 !mx-auto !w-full
   }
 }
+
+
+.musicVisualiser {
+  filter: invert(6%) sepia(8%) saturate(765%) hue-rotate(236deg) brightness(97%) contrast(91%);
+}
+
+.dark .musicVisualiser {
+  filter: invert(100%) sepia(3%) saturate(1680%) hue-rotate(180deg) brightness(99%) contrast(96%) !important;
+}
+
+.visualiserPrimary {
+  filter: invert(12%) sepia(87%) saturate(2898%) hue-rotate(268deg) brightness(91%) contrast(101%);
+}

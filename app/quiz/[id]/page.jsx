@@ -14,7 +14,7 @@ const Quiz = async (props) => {
   )
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 overflow-hidden">
       <QuizContainer
         artistDetails={artistInfo}
         quizData={quizData}

@@ -69,7 +69,7 @@ const ArtistSelection = () => {
   }, [query])
 
   return (
-    <div className="flex flex-col gap-4 items-center mt-8">
+    <div className="flex flex-col gap-8 items-center mt-8">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button

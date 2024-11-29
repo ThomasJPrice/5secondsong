@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { Slider } from '../ui/slider'
 import SoundBars from './SoundBars'
 
-const MusicPlayer = ({ isPlaying, setIsPlaying, trackSrc, volume, setVolume }) => {
+const MusicPlayer = ({ isPlaying, setIsPlaying, trackSrc, volume, setVolume, index }) => {
   const audioRef = useRef(null)
   const [progress, setProgress] = useState(0)
   const [startTime, setStartTime] = useState(0)
@@ -16,6 +16,10 @@ const MusicPlayer = ({ isPlaying, setIsPlaying, trackSrc, volume, setVolume }) =
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
+    
+    if (index !== 0) {
+      setIsPlaying(true)
+    }
 
     const handleTimeUpdate = () => {
       const currentTime = audio.currentTime - startTime

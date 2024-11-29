@@ -5,6 +5,10 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import MusicPlayer from "./MusicPlayer"
+import { LoaderCircle } from "lucide-react"
+import { handleQuizSubmit } from "@/lib/server"
+import { getDeezerId } from "@/lib/deezer"
+import { useRouter } from "next/navigation"
 
 const QuizContainer = ({ artistDetails, quizData }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -15,16 +19,40 @@ const QuizContainer = ({ artistDetails, quizData }) => {
 
   const [score, setScore] = useState(0)
 
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [startTime, setStartTime] = useState(Date.now())  
+
+  const router = useRouter()
+
   function handleNextQuestion() {
     if (selectedAnswer && currentQuestionIndex < 9) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
       setIsPlaying(false)
-      
+
       if (selectedAnswer.correct) {
         setScore(score + 1)
       }
     }
+  }
+
+  async function handleSubmit() {
+    setIsLoading(true)
+
+    const deezerId = await getDeezerId(artistDetails.id)
+
+    const time = Date.now() - startTime
+
+    const id = await handleQuizSubmit(
+      artistDetails.id,
+      deezerId,
+      selectedAnswer.correct ? score + 1 : score,
+      time
+    )
+
+    setIsLoading(false)
+    router.replace(`/result/${id}`)
   }
 
   return (
@@ -55,6 +83,7 @@ const QuizContainer = ({ artistDetails, quizData }) => {
               trackSrc={quizData[currentQuestionIndex].trackPreview}
               volume={volume}
               setVolume={setVolume}
+              index={currentQuestionIndex}
             />
 
             {/* options */}
@@ -87,7 +116,16 @@ const QuizContainer = ({ artistDetails, quizData }) => {
       </div>
 
       <div className="flex justify-center">
-        <Button disabled={!selectedAnswer} onClick={handleNextQuestion}>Next</Button>
+        {currentQuestionIndex !== 9 ?
+          (
+            <Button disabled={!selectedAnswer} onClick={() => handleNextQuestion()}>Next</Button>
+          )
+          :
+          (
+            <Button disabled={!selectedAnswer} onClick={() => handleSubmit()}>
+              {isLoading ? <LoaderCircle className="animate-spin" /> : 'Submit'}
+            </Button>
+          )}
       </div>
     </div>
   )

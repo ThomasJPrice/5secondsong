@@ -2,10 +2,7 @@ import { getArtistInfo } from "@/lib/spotify"
 import { createClient } from "@/utils/supabase/server"
 import { cookies } from "next/headers"
 import Image from "next/image"
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ShareIcon } from "lucide-react";
+import ShareResult from "@/components/shared/ShareResult";
 
 function calculateTime(time) {
   var secs = time / 1000
@@ -27,9 +24,9 @@ const ResultPage = async (props) => {
   return (
     <div className="container py-4 flex flex-col items-center">
       {/* card */}
-      <div className="w-full max-w-[350px] border border-primary p-4 rounded-[0.5rem] shadow-lg">
+      <div id="result-card" className="w-full bg-background max-w-[350px] border border-primary p-4 rounded-[0.5rem] shadow-lg">
         <div>
-          <Image src={artistInfo.images[0].url} width={artistInfo.images[0].width} height={artistInfo.images[0].height} className="rounded-[0.3rem]" alt={`Cover image for ${artistInfo.name}`} />
+          <Image priority src={artistInfo.images[0].url} width={artistInfo.images[0].width} height={artistInfo.images[0].height} className="rounded-[0.3rem]" alt={`Cover image for ${artistInfo.name}`} />
         </div>
 
         <div className="mt-4 px-2">
@@ -49,7 +46,7 @@ const ResultPage = async (props) => {
         </div>
       </div>
 
-      <Button className='mt-8'><ShareIcon /> Share</Button>
+      <ShareResult artist={artistInfo.name} score={resultData.score} time={resultData.time} />
     </div>
   )
 }

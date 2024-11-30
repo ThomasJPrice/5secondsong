@@ -12,8 +12,8 @@ const Navbar = () => {
           <Button variant='link'>Home</Button>
         </Link>
 
-        <Link href='#' className="cursor-not-allowed">
-          <Button variant='link' disabled >Leaderboard</Button>
+        <Link href='/leaderboard'>
+          <Button variant='link'>Leaderboard</Button>
         </Link>
       </ul>
 

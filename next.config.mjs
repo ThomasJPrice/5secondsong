@@ -14,7 +14,8 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'api.deezer.com'
       }
-    ]
+    ],
+    unoptimized: true
   }
 };
 

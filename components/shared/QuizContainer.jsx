@@ -7,8 +7,28 @@ import { motion, AnimatePresence } from "framer-motion"
 import MusicPlayer from "./MusicPlayer"
 import { LoaderCircle } from "lucide-react"
 import { handleQuizSubmit } from "@/lib/server"
-import { getDeezerId } from "@/lib/deezer"
 import { useRouter } from "next/navigation"
+
+function validateQuizSubmission({ score, time, deezerId, selectedAnswer }) {
+  if (score > 10 || score < 0) {
+    return { valid: false, message: "Score must be between 0 and 10." };
+  }
+
+  if (time < 0 || time > 3600000) {
+    return { valid: false, message: "Time must be between 0 and 3600000 ms." };
+  }
+
+  if (!deezerId) {
+    return { valid: false, message: "Deezer ID is required." };
+  }
+
+  if (!selectedAnswer) {
+    return { valid: false, message: "Selected answer is required." };
+  }
+
+  return { valid: true, message: "Validation successful." };
+}
+
 
 const QuizContainer = ({ artistDetails, quizData }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -21,7 +41,7 @@ const QuizContainer = ({ artistDetails, quizData }) => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [startTime, setStartTime] = useState(Date.now())  
+  const [startTime, setStartTime] = useState(Date.now())
 
   const router = useRouter()
 
@@ -40,16 +60,29 @@ const QuizContainer = ({ artistDetails, quizData }) => {
   async function handleSubmit() {
     setIsLoading(true)
 
-    const deezerId = await getDeezerId(artistDetails.id)
-
     const time = Date.now() - startTime
 
-    const id = await handleQuizSubmit(
-      artistDetails.id,
-      deezerId,
-      selectedAnswer.correct ? score + 1 : score,
-      time
-    )
+    const validation = validateQuizSubmission({
+      score: score,
+      time: time,
+      deezerId: artistDetails.id,
+      selectedAnswer: selectedAnswer
+    })
+
+    if (!validation.valid) {
+      console.error(validation.message)
+      return
+    }
+
+    const id = await handleQuizSubmit({
+      deezer_artist_id: artistDetails.id,
+      artist_details: {
+        name: artistDetails.name,
+        image: artistDetails.picture_big
+      },
+      score: selectedAnswer.correct ? score + 1 : score,
+      time: time
+    })
 
     setIsLoading(false)
     router.replace(`/result/${id}`)
@@ -58,7 +91,7 @@ const QuizContainer = ({ artistDetails, quizData }) => {
   return (
     <div>
       <div className="flex items-center gap-4">
-        <Image className="h-[80px] w-[80px] aspect-square object-cover rounded-[0.5rem]" src={artistDetails.images[0].url} width={artistDetails.images[0].width} height={artistDetails.images[0].height} alt={`Image for ${artistDetails.name}`} />
+        <Image className="h-[80px] w-[80px] aspect-square object-cover rounded-[0.5rem]" src={artistDetails.picture_medium} width={400} height={400} alt={`Image for ${artistDetails.name}`} />
 
         <div>
           <h2 className="text-2xl font-primary text-primary">{artistDetails.name}</h2>
@@ -76,7 +109,6 @@ const QuizContainer = ({ artistDetails, quizData }) => {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
           >
-            {/* music player placeholder */}
             <MusicPlayer
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}

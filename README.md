@@ -2,7 +2,7 @@
 Choose an artist, and get 5 seconds to name each song!
 ## Discover Local Events with Features including:
 
-- Integration with Spotify API for artist details and search, as well as Deezer API for music samples
+- Integration with Deezer API for artist details and search, as well as music samples
 - Quiz page with music player and visualiser
 - Result card (stored in database) and sharing options
 - Light/dark mode
@@ -12,7 +12,6 @@ Choose an artist, and get 5 seconds to name each song!
 
 - NextJS 15
 - Tailwind CSS
-- Spotify API
 - Deezer API
 - shadcn/ui
 - Supabase

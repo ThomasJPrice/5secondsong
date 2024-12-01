@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import LeaderboardArtist from './LeaderboardArtist'
+import Link from 'next/link'
 
 const Leaderboard = ({ entries }) => {
   const formatTime = (ms) => {
@@ -20,10 +20,20 @@ const Leaderboard = ({ entries }) => {
         </TableHeader>
         <TableBody>
           {entries.map((entry, index) => (
-            <TableRow key={entry.id}>
+            <TableRow key={entry.deezer_artist_id + `${index}`}>
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>
-                <LeaderboardArtist id={entry.spotify_artist_id} />
+                <div className="flex items-center space-x-3">
+                  <div className="relative w-10 h-10">
+                    <Image
+                      src={entry.artist_details.image}
+                      alt={`Image for ${entry.artist_details.name}`}
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                  </div>
+                  <Link className="hover:underline" href={`/quiz/${entry.deezer_artist_id}`}>{entry.artist_details.name}</Link>
+                </div>
               </TableCell>
               <TableCell className="text-right">{entry?.score}</TableCell>
               <TableCell className="text-right">{formatTime(entry?.time)}s</TableCell>

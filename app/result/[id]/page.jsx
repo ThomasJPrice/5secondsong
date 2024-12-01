@@ -1,4 +1,3 @@
-import { getArtistInfo } from "@/lib/spotify"
 import { createClient } from "@/utils/supabase/server"
 import { cookies } from "next/headers"
 import Image from "next/image"
@@ -19,18 +18,20 @@ const ResultPage = async (props) => {
 
   if (!resultData) return <div className="container">No result found.</div>
 
-  const artistInfo = await getArtistInfo(resultData.spotify_artist_id)
+  const artistInfo = resultData.artist_details || null
 
   return (
     <div className="container py-4 flex flex-col items-center">
       {/* card */}
       <div id="result-card" className="w-full bg-background max-w-[350px] border border-primary p-4 rounded-[0.5rem] shadow-lg">
-        <div>
-          <Image priority src={artistInfo.images[0].url} width={artistInfo.images[0].width} height={artistInfo.images[0].height} className="rounded-[0.3rem]" alt={`Cover image for ${artistInfo.name}`} />
-        </div>
+        {artistInfo ? <div>
+          <Image priority src={artistInfo.image} width={400} height={400} className="rounded-[0.3rem]" alt={`Cover image for ${artistInfo.name}`} />
+        </div> : <div>
+            <Image priority src='/placeholder.jpg' className="rounded-[0.3rem]" width={360} height={360} alt="Placeholder artist image" />
+          </div>}
 
         <div className="mt-4 px-2">
-          <h3 className="text-primary font-primary text-center text-3xl">{artistInfo.name}</h3>
+          <h3 className="text-primary font-primary text-center text-3xl">{artistInfo?.name}</h3>
 
           <div className="flex justify-between mt-2">
             <div className="flex flex-col items-center">
@@ -46,7 +47,7 @@ const ResultPage = async (props) => {
         </div>
       </div>
 
-      <ShareResult artist={artistInfo.name} score={resultData.score} time={resultData.time} />
+      <ShareResult artist={artistInfo?.name} score={resultData.score} time={resultData.time} />
     </div>
   )
 }

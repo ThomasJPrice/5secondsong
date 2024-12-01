@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { createQuizData } from '@/lib/deezer'
-import { getArtistInfo } from "@/lib/spotify";
+import { createQuizData, getArtistInfo } from '@/lib/deezer'
 import QuizContainer from "@/components/shared/QuizContainer";
 
 const Quiz = async (props) => {

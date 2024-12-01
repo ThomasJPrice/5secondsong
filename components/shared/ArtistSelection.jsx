@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, ChevronsUpDown, Loader, LoaderCircle, LoaderIcon } from "lucide-react"
+import { ChevronsUpDown, LoaderCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,34 +17,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useEffect, useState } from "react"
-import { cn } from "@/lib/utils"
 import { CommandLoading } from "cmdk"
-import { querySpotifyArtists } from "@/lib/spotify"
 import Image from "next/image"
 import Link from "next/link"
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-]
+import { queryArtists } from "@/lib/deezer"
 
 const ArtistSelection = () => {
   const [open, setOpen] = useState(false)
@@ -59,7 +35,7 @@ const ArtistSelection = () => {
 
       setIsLoading(true)
 
-      const artists = await querySpotifyArtists(query)
+      const artists = await queryArtists(query)
 
       setResults(artists)
       setIsLoading(false)
@@ -110,13 +86,7 @@ const ArtistSelection = () => {
                           setOpen(false)
                         }}
                       >
-                        {/* <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === artist.name ? "opacity-100" : "opacity-0"
-                        )}
-                      /> */}
-                        <Image height={32} width={32} src={artist.image ? artist.image : ''} className="aspect-square object-cover rounded-[0.3rem]" alt={artist.name} />
+                        <Image height={32} width={32} src={artist.picture_big ? artist.picture_big : ''} className="aspect-square object-cover rounded-[0.3rem]" alt={artist.name} />
                         {artist.name}
                       </CommandItem>
                     ))}

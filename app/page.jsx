@@ -1,6 +1,7 @@
 import ArtistSelection from "@/components/shared/ArtistSelection";
+import { handleQuizSubmit } from "@/lib/server";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="container py-4">
       {/* header */}

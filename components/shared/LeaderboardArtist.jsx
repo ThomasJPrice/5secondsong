@@ -5,6 +5,8 @@ import Link from "next/link";
 const LeaderboardArtist = async ({ id }) => {
   const artist = await getArtistInfo(id)
 
+  if (!artist) return <div>Artist not found.</div>
+
   return (
     <div className="flex items-center space-x-3">
       <div className="relative w-10 h-10">

@@ -25,8 +25,8 @@ const Leaderboard = ({ entries }) => {
               <TableCell>
                 <LeaderboardArtist id={entry.spotify_artist_id} />
               </TableCell>
-              <TableCell className="text-right">{entry.score}</TableCell>
-              <TableCell className="text-right">{formatTime(entry.time)}s</TableCell>
+              <TableCell className="text-right">{entry?.score}</TableCell>
+              <TableCell className="text-right">{formatTime(entry?.time)}s</TableCell>
             </TableRow>
           ))}
         </TableBody>

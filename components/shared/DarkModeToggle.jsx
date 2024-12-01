@@ -1,12 +1,19 @@
 'use client'
 
 import { useTheme } from 'next-themes'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Moon, Sun } from 'lucide-react'
 
 const DarkModeToggle = () => {
+  const [mounted, setMounted] = useState(false)
   const { setTheme, theme } = useTheme()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   return (
     <>

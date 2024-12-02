@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server"
 import { cookies } from "next/headers"
 import Image from "next/image"
 import ShareResult from "@/components/shared/ShareResult";
+import NotFound from "@/app/not-found";
 
 function calculateTime(time) {
   var secs = time / 1000
@@ -16,7 +17,7 @@ const ResultPage = async (props) => {
 
   const { data: resultData } = await supabase.from('results').select().eq('id', params.id).single()
 
-  if (!resultData) return <div className="container">No result found.</div>
+  if (!resultData) return <NotFound />
 
   const artistInfo = resultData.artist_details || null
 

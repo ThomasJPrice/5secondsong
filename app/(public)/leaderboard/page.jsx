@@ -3,6 +3,11 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import React from 'react'
 
+export const metadata = {
+  title: 'Leaderboard | 5 Second Song',
+  description: 'Explore the 5 Second Song leaderboard! See top players, fastest times, and highest scores. Can you beat the best and climb to the top?'
+}
+
 const LeaderboardPage = async () => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)

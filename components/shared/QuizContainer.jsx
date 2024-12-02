@@ -91,7 +91,7 @@ const QuizContainer = ({ artistDetails, quizData }) => {
   return (
     <div>
       <div className="flex items-center gap-4">
-        <Image className="h-[80px] w-[80px] aspect-square object-cover rounded-[0.5rem]" src={artistDetails.picture_medium} width={400} height={400} alt={`Image for ${artistDetails.name}`} />
+        <Image className="h-[80px] w-[80px] aspect-square object-cover rounded-[0.5rem]" src={artistDetails.picture_medium ? artistDetails.picture_medium : '/placeholder.jpg'} width={400} height={400} alt={`Image for ${artistDetails.name}`} />
 
         <div>
           <h2 className="text-2xl font-primary text-primary">{artistDetails.name}</h2>
@@ -129,7 +129,7 @@ const QuizContainer = ({ artistDetails, quizData }) => {
                   <div className="relative">
                     <Image
                       priority
-                      src={option.image}
+                      src={option.image ? option.image : '/placeholder.jpg'}
                       width={200}
                       height={200}
                       className={`aspect-square transition-all ease-in duration-150 border-4 rounded-[0.5rem] object-cover ${selectedAnswer

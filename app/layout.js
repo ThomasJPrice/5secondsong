@@ -5,8 +5,8 @@ import { ThemeProvider } from "@/components/shared/theme-provider";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Guess the Song!",
-  description: "Choose an artist and guess 10 of their songs from a 5-second clip!",
+  title: "Home | 5 Second Song",
+  description: "Choose an artist and get 5 seconds to guess each song!",
 };
 
 const CabinetGrotesk = localFont({
@@ -30,22 +30,7 @@ export default function RootLayout({ children }) {
           defaultTheme="light"
         >
           <div className={`flex flex-col min-h-screen`}>
-            <Navbar />
-
-            <main className="flex-grow">
-              {children}
-            </main>
-
-            <footer className="container pt-4">
-              <div className="w-full h-[1px] bg-primary"></div>
-
-              <div className="py-2 flex items-center justify-between">
-                <p className="text-primary font-semibold">Made by <Link className="underline" href='https://thomasprice.me' target="_blank">Thomas Price</Link></p>
-
-                <Link className="text-primary font-semibold" href='https://github.com/ThomasJPrice/guess-the-song' target="_blank">GitHub</Link>
-              </div>
-            </footer>
-
+            {children}
           </div>
         </ThemeProvider>
       </body>

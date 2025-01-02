@@ -1,4 +1,4 @@
-# Guess the Song
+# 5 Second Song
 Choose an artist, and get 5 seconds to name each song!
 ## Discover Local Events with Features including:
 

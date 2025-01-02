@@ -1,4 +1,5 @@
 import ArtistSelection from "@/components/shared/ArtistSelection";
+import ModeChooser from "@/components/shared/ModeChooser";
 import Navbar from "@/components/shared/Navbar";
 import Image from 'next/image'
 import Link from "next/link";
@@ -6,13 +7,6 @@ import Link from "next/link";
 export default async function Home() {
   return (
     <main className="flex">
-
-      {/* left marquee */}
-      {/* <div className="flex-1 border">
-        hi
-      </div> */}
-
-
       {/* main centre */}
       <div className="container h-full min-h-screen flex flex-col">
         <Navbar />
@@ -25,10 +19,9 @@ export default async function Home() {
               <div className="text-center flex flex-col items-center gap-8">
                 {/* <h1 className="font-primary text-4xl md:text-5xl text-primary">Guess the Song</h1> */}
                 <Image src='/logo-nobg.png' width={1208} height={564} alt="5 Second Song" className="max-w-[300px]" />
-                <p className="text-lg">Choose an artist and get 5 seconds to guess each song!</p>
               </div>
 
-              <ArtistSelection />
+              <ModeChooser />
             </div>
           </div>
         </main>
@@ -43,11 +36,6 @@ export default async function Home() {
           </div>
         </footer>
       </div>
-
-      {/* right marquee */}
-      {/* <div className="flex-1 border">
-        hi
-      </div> */}
     </main>
   );
 }

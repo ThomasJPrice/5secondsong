@@ -20,7 +20,7 @@ import { useEffect, useState } from "react"
 import { CommandLoading } from "cmdk"
 import Image from "next/image"
 import Link from "next/link"
-import { queryArtists } from "@/lib/deezer"
+import { queryArtists } from "@/actions/deezer"
 
 const ArtistSelection = () => {
   const [open, setOpen] = useState(false)

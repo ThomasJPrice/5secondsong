@@ -6,8 +6,8 @@ import { Button } from "../ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import MusicPlayer from "./MusicPlayer"
 import { LoaderCircle } from "lucide-react"
-import { handleQuizSubmit } from "@/lib/server"
 import { useRouter } from "next/navigation"
+import { handleQuizSubmit } from "@/actions/quiz"
 
 function validateQuizSubmission({ score, time, deezerId, selectedAnswer }) {
   if (score > 10 || score < 0) {

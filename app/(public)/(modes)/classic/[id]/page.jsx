@@ -2,6 +2,7 @@ import Image from "next/image";
 import NotFound from "@/app/not-found";
 import { createClassicQuizData, getArtistInfo } from "@/actions/deezer";
 import QuizContainer from "@/components/shared/QuizContainer";
+import NotEnoughTracks from "@/components/shared/NotEnoughTracks";
 
 export async function generateMetadata(props) {
   const params = await props.params
@@ -19,6 +20,10 @@ const Quiz = async (props) => {
 
   const artistInfo = await getArtistInfo(params.id)
   const quizData = await createClassicQuizData(params.id)
+
+  if (quizData === 'Not enough tracks') {
+    return <NotEnoughTracks />
+  }
 
   if (!artistInfo || !quizData) return (
     <NotFound />

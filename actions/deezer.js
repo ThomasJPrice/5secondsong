@@ -9,7 +9,7 @@ export async function createClassicQuizData(id) {
       .then((data) => data.data)
 
     if (!topTracks || topTracks.length < 10) {
-      throw new Error('Not enough tracks available to create a quiz');
+      return 'Not enough tracks'
     }
 
     const shuffledTracks = topTracks.sort(() => Math.random() - 0.5);
@@ -55,9 +55,8 @@ export async function createLyricsQuizData(id) {
       .then((data) => data.data)
 
     if (!topTracks || topTracks.length < 10) {
-      throw new Error('Not enough tracks available to create a quiz');
+      return 'Not enough tracks'
     }
-
     const shuffledTracks = topTracks.sort(() => Math.random() - 0.5);
 
     // const quizTracks = shuffledTracks.slice(0, 10);
@@ -96,20 +95,26 @@ export async function createLyricsQuizData(id) {
   }
 }
 
-export async function queryArtists(query) {
+export async function queryArtists(query, options = {}) {
   try {
-    const response = await fetch(`${BASEURL}/search/artist?q="${query}"&limit=10`)
+    const response = await fetch(`https://api.deezer.com/search/artist?q=${query}`, options);
 
-    const data = await response.json()
-
-    if (data) {
-      return data.data
+    if (!response.ok) {
+      throw new Error("Failed to fetch artists");
     }
 
+    const data = await response.json();
+    return data.data; // Assuming the API response contains an array of artists in `data`
   } catch (error) {
-    console.error('Error querying Deezer artists', query)
+    if (error.name === "AbortError") {
+      console.log("Fetch request cancelled");
+    } else {
+      console.error("Error fetching artists:", error);
+    }
+    return [];
   }
 }
+
 
 export async function getArtistInfo(id) {
   try {

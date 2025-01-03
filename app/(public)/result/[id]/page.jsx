@@ -11,6 +11,10 @@ function calculateTime(time) {
   return secs.toFixed(1)
 }
 
+export const metadata = {
+  title: 'Results | 5 Second Song',
+}
+
 const ResultPage = async (props) => {
   const params = await props.params
 

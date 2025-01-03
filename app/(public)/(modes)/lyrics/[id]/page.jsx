@@ -20,21 +20,16 @@ const LyricsQuiz = async (props) => {
   const artistInfo = await getArtistInfo(params.id)
   const quizData = await createLyricsQuizData(params.id, 'lyrics')
 
-  console.log(quizData);
-  
-
   if (!artistInfo || !quizData) return (
     <NotFound />
   )
-
-  return <div>Loading...</div>
 
   return (
     <div className="container py-4 overflow-hidden">
       <QuizContainer
         artistDetails={artistInfo}
         quizData={quizData}
-        type='lyrics'
+        mode='lyrics'
       />
     </div>
   )

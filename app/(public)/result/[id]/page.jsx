@@ -3,6 +3,8 @@ import { cookies } from "next/headers"
 import Image from "next/image"
 import ShareResult from "@/components/shared/ShareResult";
 import NotFound from "@/app/not-found";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function calculateTime(time) {
   var secs = time / 1000
@@ -28,13 +30,15 @@ const ResultPage = async (props) => {
         {artistInfo ? <div>
           <Image priority src={artistInfo.image} width={400} height={400} className="rounded-[0.3rem]" alt={`Cover image for ${artistInfo.name}`} />
         </div> : <div>
-            <Image priority src='/placeholder.jpg' className="rounded-[0.3rem]" width={360} height={360} alt="Placeholder artist image" />
-          </div>}
+          <Image priority src='/placeholder.jpg' className="rounded-[0.3rem]" width={360} height={360} alt="Placeholder artist image" />
+        </div>}
 
-        <div className="mt-4 px-2">
+        <div className="mt-4 px-2 flex flex-col items-center">
           <h3 className="text-primary font-primary text-center text-3xl">{artistInfo?.name}</h3>
 
-          <div className="flex justify-between mt-2">
+          <h4 className="text-sm bg-primary text-white font-bold px-2 rounded-sm capitalize mt-1">{resultData.mode}</h4>
+
+          <div className="flex justify-between mt-2 w-full">
             <div className="flex flex-col items-center">
               <p className="text-sm">Score</p>
               <p className="text-2xl font-primary text-primary">{resultData.score}/10</p>
@@ -49,6 +53,10 @@ const ResultPage = async (props) => {
       </div>
 
       <ShareResult artist={artistInfo?.name} score={resultData.score} time={resultData.time} />
+
+      <Link className="mt-4" href='/leaderboard'>
+        <Button variant='link'>View Leaderboard</Button>
+      </Link>
     </div>
   )
 }

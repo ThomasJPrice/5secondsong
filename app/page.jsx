@@ -21,7 +21,7 @@ export default async function Home() {
                 <Image src='/logo-nobg.png' width={1208} height={564} alt="5 Second Song" className="max-w-[300px]" />
               </div>
 
-              <ModeChooser />
+              <ArtistSelection />
             </div>
           </div>
         </main>

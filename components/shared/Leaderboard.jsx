@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from 'next/link'
 
-const Leaderboard = ({ entries }) => {
+const Leaderboard = ({ entries, mode }) => {
   const formatTime = (ms) => {
     return (ms / 1000).toFixed(1)
   }
@@ -32,7 +32,7 @@ const Leaderboard = ({ entries }) => {
                       className="rounded-full object-cover"
                     />
                   </div>
-                  <Link className="hover:underline" href={`/quiz/${entry.deezer_artist_id}`}>{entry.artist_details.name}</Link>
+                  <Link className="hover:underline" href={`/${mode}/${entry.deezer_artist_id}`}>{entry.artist_details.name}</Link>
                 </div>
               </TableCell>
               <TableCell className="text-right">{entry?.score}</TableCell>

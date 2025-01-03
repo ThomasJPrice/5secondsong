@@ -8,6 +8,8 @@ import MusicPlayer from "./MusicPlayer"
 import { LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { handleQuizSubmit } from "@/actions/quiz"
+import { ClassicQuestion } from "./ClassicQuestion"
+import { LyricsQuestion } from "./LyricsQuestion"
 
 function validateQuizSubmission({ score, time, deezerId, selectedAnswer }) {
   if (score > 10 || score < 0) {
@@ -30,12 +32,16 @@ function validateQuizSubmission({ score, time, deezerId, selectedAnswer }) {
 }
 
 
-const QuizContainer = ({ artistDetails, quizData }) => {
+const QuizContainer = ({ artistDetails, quizData, mode }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
 
+  // for classic mode
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(1)
+  const [selectedAnswer, setSelectedAnswer] = useState(null)
+
+  // for lyrics mode
+  const [userInput, setUserInput] = useState('')
 
   const [score, setScore] = useState(0)
 
@@ -46,13 +52,29 @@ const QuizContainer = ({ artistDetails, quizData }) => {
   const router = useRouter()
 
   function handleNextQuestion() {
-    if (selectedAnswer && currentQuestionIndex < 9) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setSelectedAnswer(null)
-      setIsPlaying(false)
+    if (currentQuestionIndex === 9) {
+      handleSubmit()
+      return
+    }
 
-      if (selectedAnswer.correct) {
-        setScore(score + 1)
+    if (mode === "classic") {
+      if (selectedAnswer && currentQuestionIndex < 9) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedAnswer(null);
+        setIsPlaying(false);
+
+        if (selectedAnswer.correct) {
+          setScore(score + 1);
+        }
+      }
+    } else if (mode === "lyrics") {
+      if (userInput && currentQuestionIndex < 9) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setUserInput("");
+
+        if (userInput.trim().toLowerCase() === quizData[currentQuestionIndex].removedWord.toLowerCase()) {
+          setScore(score + 1);
+        }
       }
     }
   }
@@ -66,12 +88,19 @@ const QuizContainer = ({ artistDetails, quizData }) => {
       score: score,
       time: time,
       deezerId: artistDetails.id,
-      selectedAnswer: selectedAnswer
+      selectedAnswer: mode === "classic" ? selectedAnswer : userInput
     })
 
     if (!validation.valid) {
       console.error(validation.message)
       return
+    }
+
+    var finalScore = 0
+    if (mode === "classic") {
+      finalScore = selectedAnswer.correct ? score + 1 : score
+    } else if (mode === "lyrics") {
+      finalScore = userInput.trim().toLowerCase() === quizData[currentQuestionIndex].removedWord.toLowerCase() ? score + 1 : score
     }
 
     const id = await handleQuizSubmit({
@@ -80,8 +109,9 @@ const QuizContainer = ({ artistDetails, quizData }) => {
         name: artistDetails.name,
         image: artistDetails.picture_big
       },
-      score: selectedAnswer.correct ? score + 1 : score,
-      time: time
+      score: finalScore,
+      time: time,
+      mode: mode
     })
 
     setIsLoading(false)
@@ -109,55 +139,42 @@ const QuizContainer = ({ artistDetails, quizData }) => {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
           >
-            <MusicPlayer
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              trackSrc={quizData[currentQuestionIndex].trackPreview}
-              volume={volume}
-              setVolume={setVolume}
-              index={currentQuestionIndex}
-            />
-
-            {/* options */}
-            <ul className="grid grid-cols-3 gap-4">
-              {quizData[currentQuestionIndex].options.map((option, index) => (
-                <li
-                  key={option + index}
-                  className="cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-                  onClick={() => setSelectedAnswer(option)}
-                >
-                  <div className="relative">
-                    <Image
-                      priority
-                      src={option.image ? option.image : '/placeholder.jpg'}
-                      width={200}
-                      height={200}
-                      className={`aspect-square transition-all ease-in duration-150 border-4 rounded-[0.5rem] object-cover ${selectedAnswer
-                        ? (option.correct ? 'border-green-500' : 'border-red-500')
-                        : 'border-transparent'
-                        }`}
-                      alt={`Cover image for ${option.name}`}
-                    />
-                    <p className="mt-2 text-center text-sm line-clamp-2">{option.name}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {mode === 'classic' ? (
+              <ClassicQuestion
+                quizData={quizData}
+                currentQuestionIndex={currentQuestionIndex}
+                selectedAnswer={selectedAnswer}
+                setSelectedAnswer={setSelectedAnswer}
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+                volume={volume}
+                setVolume={setVolume}
+              />
+            ) : mode === 'lyrics' ? (
+              <LyricsQuestion
+                quizData={quizData}
+                currentQuestionIndex={currentQuestionIndex}
+                userInput={userInput}
+                setUserInput={setUserInput}
+                handleSubmit={handleNextQuestion}
+              />
+            ) : (
+              <div>Unrecognised mode.</div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
 
       <div className="flex justify-center">
-        {currentQuestionIndex !== 9 ?
-          (
-            <Button disabled={!selectedAnswer} onClick={() => handleNextQuestion()}>Next</Button>
-          )
-          :
-          (
-            <Button disabled={!selectedAnswer} onClick={() => handleSubmit()}>
-              {isLoading ? <LoaderCircle className="animate-spin" /> : 'Submit'}
-            </Button>
-          )}
+        {currentQuestionIndex !== 9 ? (
+          <Button disabled={!selectedAnswer && !userInput} onClick={handleNextQuestion}>
+            Next
+          </Button>
+        ) : (
+          <Button disabled={!selectedAnswer && !userInput} onClick={handleSubmit}>
+            {isLoading ? <LoaderCircle className="animate-spin" /> : 'Submit'}
+          </Button>
+        )}
       </div>
     </div>
   )

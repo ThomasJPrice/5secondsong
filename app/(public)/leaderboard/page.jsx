@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import React from 'react'
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 export const metadata = {
   title: 'Leaderboard | 5 Second Song',
   description: 'Explore the 5 Second Song leaderboard! See top players, fastest times, and highest scores. Can you beat the best and climb to the top?'
@@ -18,7 +20,18 @@ const LeaderboardPage = async () => {
     <div className='container py-4 overflow-hidden'>
       <h1 className="font-primary text-center text-4xl md:text-5xl text-primary">Leaderboard</h1>
 
-      <Leaderboard entries={results} />
+      <Tabs defaultValue="classic">
+        <TabsList>
+          <TabsTrigger value="classic">Classic</TabsTrigger>
+          <TabsTrigger value="lyrics">Lyrics</TabsTrigger>
+        </TabsList>
+        <TabsContent value="classic">
+          <Leaderboard mode='classic' entries={results.filter((value) => value.mode === 'classic')} />
+        </TabsContent>
+        <TabsContent value="lyrics">
+          <Leaderboard mode='lyrics' entries={results.filter((value) => value.mode === 'lyrics')} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

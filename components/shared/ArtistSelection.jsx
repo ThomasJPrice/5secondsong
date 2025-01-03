@@ -21,6 +21,7 @@ import { CommandLoading } from "cmdk"
 import Image from "next/image"
 import Link from "next/link"
 import { queryArtists } from "@/actions/deezer"
+import ModeChooser from "./ModeChooser"
 
 const ArtistSelection = () => {
   const [open, setOpen] = useState(false)
@@ -28,6 +29,8 @@ const ArtistSelection = () => {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+
+  const [mode, setMode] = useState(null)
 
   useEffect(() => {
     async function fetchResults() {
@@ -46,6 +49,8 @@ const ArtistSelection = () => {
 
   return (
     <div className="flex flex-col gap-8 items-center mt-8">
+      <h2 className='text-center text-2xl text-primary font-primary'>1. Choose an artist:</h2>
+
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -97,9 +102,11 @@ const ArtistSelection = () => {
           </Command>
         </PopoverContent>
       </Popover>
+              
+      <ModeChooser mode={mode} setMode={setMode} />
 
-      <Link href={value ? `/quiz/${value.id}` : '#'} aria-disabled={!value} className={`${!value && 'cursor-not-allowed pointer-events-none'}`}>
-        <Button disabled={!value}>Start Quiz</Button>
+      <Link href={(value && mode) ? `/${mode}/${value.id}` : '#'} aria-disabled={!value || !mode} className={`${(!value || !mode) && 'cursor-not-allowed pointer-events-none'}`}>
+        <Button disabled={!value || !mode}>Start Quiz</Button>
       </Link>
     </div>
   )

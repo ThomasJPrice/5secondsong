@@ -3,6 +3,7 @@ import "./globals.css";
 import localFont from 'next/font/local'
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import Link from "next/link";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: "Home | 5 Second Song",
@@ -33,6 +34,8 @@ export default function RootLayout({ children }) {
             {children}
           </div>
         </ThemeProvider>
+
+        <Toaster />
       </body>
     </html >
   );

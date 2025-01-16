@@ -17,7 +17,7 @@ const ModeChooser = ({ mode: chosenMode, setMode: setChosenMode }) => {
           <button
             onClick={() => setChosenMode(mode.slug)}
             key={mode + index}
-            className={`flex flex-col items-center outline max-w-[300px] p-4 rounded-lg transition-all duration-150 outline-primary ease-in-out ${chosenMode === mode.slug ? 'outline-4' : 'outline-[1px]'
+            className={`flex flex-col items-center outline max-w-[300px] p-4 rounded-lg outline-primary ${chosenMode === mode.slug ? 'outline-4' : 'outline-[1px]'
               }`}
           >
             <Image src={mode.icon} width={125} height={125} alt={mode.name} />

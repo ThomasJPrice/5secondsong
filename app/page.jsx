@@ -1,15 +1,29 @@
 import ArtistSelection from "@/components/shared/ArtistSelection";
 import ModeChooser from "@/components/shared/ModeChooser";
 import Navbar from "@/components/shared/Navbar";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 import Image from 'next/image'
 import Link from "next/link";
 
 export default async function Home() {
+  async function handleSignOut() {
+    "use server"
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    await supabase.auth.signOut()
+  }
+
   return (
     <main className="flex">
       {/* main centre */}
       <div className="container h-full min-h-screen flex flex-col">
         <Navbar />
+
+        <form action={handleSignOut}>
+          <button type="submit">Sign Out</button>
+        </form>
 
         <main className="flex-grow">
           <div className="w-full flex">

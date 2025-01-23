@@ -5,11 +5,7 @@ import ShareResult from "@/components/shared/ShareResult";
 import NotFound from "@/app/not-found";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-function calculateTime(time) {
-  var secs = time / 1000
-  return secs.toFixed(1)
-}
+import ResultCard from "@/components/shared/ResultCard";
 
 export const metadata = {
   title: 'Results | 5 Second Song',
@@ -27,40 +23,31 @@ const ResultPage = async (props) => {
 
   const artistInfo = resultData.artist_details || null
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <div className="container py-4 flex flex-col items-center">
+      {/* signed out banner */}
+      {user ? null : <div className="p-2 border border-border text-foreground rounded-md bg-card w-full max-w-md mb-4">
+        <p className="text-center text-sm text-">You're not signed in. <Link href={`/sign-in?next=/api/link-result?id=${resultData.id}`} className="font-bold text-primary underline">Sign in</Link> to save your results and show them off on the leaderboard!</p>
+      </div>}
+
       {/* card */}
-      <div id="result-card" className="w-full bg-background max-w-[350px] border border-primary p-4 rounded-[0.5rem] shadow-lg">
-        {artistInfo ? <div>
-          <Image priority src={artistInfo.image} width={400} height={400} className="rounded-[0.3rem]" alt={`Cover image for ${artistInfo.name}`} />
-        </div> : <div>
-          <Image priority src='/placeholder.jpg' className="rounded-[0.3rem]" width={360} height={360} alt="Placeholder artist image" />
-        </div>}
-
-        <div className="mt-4 px-2 flex flex-col items-center">
-          <h3 className="text-primary font-primary text-center text-3xl">{artistInfo?.name}</h3>
-
-          <h4 className="text-sm bg-primary text-white font-bold px-2 rounded-sm capitalize mt-1">{resultData.mode}</h4>
-
-          <div className="flex justify-between mt-2 w-full">
-            <div className="flex flex-col items-center">
-              <p className="text-sm">Score</p>
-              <p className="text-2xl font-primary text-primary">{resultData.score}/10</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <p className="text-sm">Time</p>
-              <p className="text-2xl font-primary text-primary">{calculateTime(resultData.time)}s</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ResultCard artistInfo={artistInfo} resultData={resultData} mode={resultData.mode} />
 
       <ShareResult artist={artistInfo?.name} score={resultData.score} time={resultData.time} />
 
-      <Link className="mt-4" href='/leaderboard'>
-        <Button variant='link'>View Leaderboard</Button>
-      </Link>
+      <div className="mt-4">
+        <Link href='/leaderboard'>
+          <Button variant='link'>View Leaderboard</Button>
+        </Link>
+
+        {user && (
+          <Link href='/profile'>
+            <Button variant='link'>View Profile</Button>
+          </Link>
+        )}
+      </div>
     </div>
   )
 }

@@ -52,9 +52,6 @@ export async function signInWithPassword(formData, mode) {
       }
     }
 
-    console.log(user);
-
-
     return { user }
 
   } else if (mode === 'signin') {
@@ -129,4 +126,21 @@ export async function createProfile(username, imageUrl) {
   if (error) return { error }
 
   return { data }
+}
+
+
+// =============
+// GET USER INFO
+// =============
+export async function getUserInfo(userId) {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  if (!userId) return null
+
+  const { data } = await supabase.from('users').select().eq('id', userId).maybeSingle()
+
+  if (!data) return null
+
+  return data
 }

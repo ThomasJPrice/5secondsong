@@ -40,6 +40,13 @@ const ProfileMakerForm = ({ redirectUrl }) => {
         return
       }
 
+      const ok = /^[a-zA-Z0-9_-]+$/.test(username)
+
+      if (!ok) {
+        toast.error('Username can only contain letters, numbers, hyphens, and underscores')
+        return
+      }
+
       // upload image if there is one
       var imageUrl = await fetch('/api/profile-image').then(res => res.json()).then(data => data.url) || null;
 

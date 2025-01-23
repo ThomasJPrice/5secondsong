@@ -5,6 +5,7 @@ import DarkModeToggle from "./DarkModeToggle"
 import { createClient } from "@/utils/supabase/server"
 import { cookies } from "next/headers"
 import { checkSignedIn } from "@/actions/login"
+import ProfileIcon from "./ProfileIcon"
 
 const Navbar = async () => {
   const signedIn = await checkSignedIn()
@@ -24,11 +25,7 @@ const Navbar = async () => {
 
       <div className="flex gap-4 items-center">
         {signedIn ? (
-          <Link href={`/`}>
-            <Button>
-              Me
-            </Button>
-          </Link>
+          <ProfileIcon size={40} link />
         ) : (
           <Link href='/sign-in'>
             <Button>

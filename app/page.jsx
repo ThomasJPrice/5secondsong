@@ -1,5 +1,4 @@
 import ArtistSelection from "@/components/shared/ArtistSelection";
-import ModeChooser from "@/components/shared/ModeChooser";
 import Navbar from "@/components/shared/Navbar";
 import Image from 'next/image'
 import Link from "next/link";

@@ -32,7 +32,7 @@ function validateQuizSubmission({ score, time, deezerId, selectedAnswer }) {
 }
 
 
-const QuizContainer = ({ artistDetails, quizData, mode }) => {
+const QuizContainer = ({ artistDetails, quizData, mode, source }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
   // for classic mode
@@ -107,11 +107,12 @@ const QuizContainer = ({ artistDetails, quizData, mode }) => {
       deezer_artist_id: artistDetails.id,
       artist_details: {
         name: artistDetails.name,
-        image: artistDetails.picture_big
+        image: artistDetails.picture_big || artistDetails.image
       },
       score: finalScore,
       time: time,
-      mode: mode
+      mode: mode,
+      source: source
     })
 
     setIsLoading(false)
@@ -121,7 +122,7 @@ const QuizContainer = ({ artistDetails, quizData, mode }) => {
   return (
     <div>
       <div className="flex items-center gap-4">
-        <Image className="h-[80px] w-[80px] aspect-square object-cover rounded-[0.5rem]" src={artistDetails.picture_medium ? artistDetails.picture_medium : '/placeholder.jpg'} width={400} height={400} alt={`Image for ${artistDetails.name}`} />
+        <Image className="h-[80px] w-[80px] aspect-square object-cover rounded-[0.5rem]" src={(artistDetails.picture_medium || artistDetails.image) ? artistDetails.picture_medium || artistDetails.image : '/placeholder.jpg'} width={400} height={400} alt={`Image for ${artistDetails.name}`} />
 
         <div>
           <h2 className="text-2xl font-primary text-primary">{artistDetails.name}</h2>

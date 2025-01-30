@@ -115,7 +115,7 @@ export async function createProfile(username, imageUrl) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: {user} } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data, error } = await supabaseService.from('users').insert({
     id: user.id,
@@ -143,4 +143,22 @@ export async function getUserInfo(userId) {
   if (!data) return null
 
   return data
+}
+
+
+
+// ========
+// GET USER
+// ========
+export async function getUser() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return null
+
+  const userInfo = await getUserInfo(user.id)
+
+  return userInfo
 }

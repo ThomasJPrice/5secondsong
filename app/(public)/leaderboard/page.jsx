@@ -14,7 +14,7 @@ const LeaderboardPage = async () => {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: results } = await supabase.from('results').select().order('score', { ascending: false }).order('time', { ascending: true })
+  const { data: results } = await supabase.from('results').select().order('score', { ascending: false }).order('time', { ascending: true }).neq('source', 'playlist')
 
   return (
     <div className='container py-4 overflow-hidden'>

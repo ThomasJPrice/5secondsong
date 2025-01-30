@@ -1,8 +1,13 @@
+import { checkSignedIn } from '@/actions/login'
 import Navbar from '@/components/shared/Navbar'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import React from 'react'
 
-const ProtectedLayout = ({ children }) => {
+const ProtectedLayout = async ({ children }) => {
+  const signedIn = await checkSignedIn()
+  if (!signedIn) redirect('/sign-in')
+
   return (
     <>
       <Navbar />

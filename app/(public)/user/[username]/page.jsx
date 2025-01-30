@@ -1,4 +1,5 @@
 import NotFound from '@/app/not-found'
+import NowPlayingComponent from '@/components/shared/NowPlayingComponent'
 import UserResults from '@/components/shared/UserResults'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
@@ -38,11 +39,14 @@ const UserPage = async (props) => {
   return (
     <div className='container py-4'>
       <div className='flex gap-8 items-center'>
-        <Image src={userData.profile_image} width={96} height={96} alt={`Image for ${userData.username}`} className='rounded-full' />
+        <Image src={userData.profile_image} width={128} height={128} alt={`Image for ${userData.username}`} className='rounded-full' />
 
         <div>
           <h1 className='font-primary text-3xl md:text-4xl text-primary'>{userData.username}</h1>
           <p>Joined: {joinedAt}</p>
+          {userData.settings?.now_playing && (
+            <NowPlayingComponent userInfo={userData} />
+          )}
         </div>
       </div>
 

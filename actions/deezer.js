@@ -2,25 +2,59 @@
 
 const BASEURL = 'https://api.deezer.com'
 
-export async function createClassicQuizData(id) {
-  try {
-    const topTracks = await fetch(`${BASEURL}/artist/${id}/top?limit=100`)
-      .then((response) => response.json())
-      .then((data) => data.data)
+import { getPlaylistTracks } from "@/actions/spotify"
 
-    if (!topTracks || topTracks.length < 10) {
-      return 'Not enough tracks'
+export async function createClassicQuizData(id, source) {
+  try {
+    let tracks = []
+
+    if (source === "artist") {
+      // Fetch top tracks from Deezer
+      const topTracks = await fetch(`${BASEURL}/artist/${id}/top?limit=100`)
+        .then((response) => response.json())
+        .then((data) => data.data)
+
+      if (!topTracks || topTracks.length < 10) {
+        return "Not enough tracks"
+      }
+
+      tracks = topTracks
+    } else if (source === "playlist") {
+      // Fetch playlist tracks from Spotify
+      const spotifyTracks = await getPlaylistTracks(id)
+
+      if (!spotifyTracks || spotifyTracks.length < 10) {
+        return "Not enough tracks in playlist"
+      }
+
+      console.log(spotifyTracks);
+      
+
+      // Convert Spotify tracks to Deezer tracks
+      const deezerTracks = await Promise.all(
+        spotifyTracks.map(async (track) => {
+          return await searchDeezerTrack(track.name, track.artist)
+        })
+      )
+
+      // Filter out any tracks that couldn't be found
+      tracks = deezerTracks.filter(Boolean)
+
+      if (tracks.length < 10) {
+        return "Not enough matching Deezer tracks"
+      }
     }
 
-    const shuffledTracks = topTracks.sort(() => Math.random() - 0.5);
+    // Shuffle and select 10 tracks
+    const shuffledTracks = tracks.sort(() => Math.random() - 0.5)
+    const quizTracks = shuffledTracks.slice(0, 10)
 
-    const quizTracks = shuffledTracks.slice(0, 10);
-
+    // Generate quiz questions
     const quizData = quizTracks.map((track, index) => {
       const falseOptions = shuffledTracks
         .filter((t) => t.id !== track.id)
         .sort(() => Math.random() - 0.5)
-        .slice(0, 2);
+        .slice(0, 2)
 
       const options = [
         {
@@ -33,35 +67,64 @@ export async function createClassicQuizData(id) {
           name: falseTrack.title,
           correct: false,
         })),
-      ].sort(() => Math.random() - 0.5);
+      ].sort(() => Math.random() - 0.5)
 
       return {
         questionNumber: index + 1,
         trackPreview: track.preview,
         options,
-      };
-    });
+      }
+    })
 
-    return quizData;
+    return quizData
   } catch (error) {
     console.error(error)
   }
 }
 
-export async function createLyricsQuizData(id) {
+
+export async function createLyricsQuizData(id, source) {
   try {
-    const topTracks = await fetch(`${BASEURL}/artist/${id}/top?limit=100`)
-      .then((response) => response.json())
-      .then((data) => data.data)
+    let tracks = []
 
-    if (!topTracks || topTracks.length < 10) {
-      return 'Not enough tracks'
+    if (source === "artist") {
+      // Fetch top tracks from Deezer
+      const topTracks = await fetch(`${BASEURL}/artist/${id}/top?limit=100`)
+        .then((response) => response.json())
+        .then((data) => data.data)
+
+      if (!topTracks || topTracks.length < 10) {
+        return "Not enough tracks"
+      }
+
+      tracks = topTracks
+    } else if (source === "playlist") {
+      // Fetch playlist tracks from Spotify
+      const spotifyTracks = await getPlaylistTracks(id)
+
+      if (!spotifyTracks || spotifyTracks.length < 10) {
+        return "Not enough tracks in playlist"
+      }
+
+      // Convert Spotify tracks to Deezer tracks
+      const deezerTracks = await Promise.all(
+        spotifyTracks.map(async (track) => {
+          return await searchDeezerTrack(track.name, track.artist)
+        })
+      )
+
+      // Filter out any tracks that couldn't be found
+      tracks = deezerTracks.filter(Boolean)
+
+      if (tracks.length < 10) {
+        return "Not enough matching Deezer tracks"
+      }
     }
-    const shuffledTracks = topTracks.sort(() => Math.random() - 0.5);
 
-    // const quizTracks = shuffledTracks.slice(0, 10);
+    // Shuffle tracks
+    const shuffledTracks = tracks.sort(() => Math.random() - 0.5)
+    let quizData = []
 
-    var quizData = []
     while (quizData.length < 10) {
       const track = shuffledTracks.pop()
 
@@ -72,9 +135,7 @@ export async function createLyricsQuizData(id) {
       const lyrics = await fetchLyrics(track.title, track.artist.name, track.album.title, track.duration)
 
       if (lyrics?.plainLyrics) {
-
-        // handle lyrics
-        const { updatedStanza, removedWord, originalStanza } = processLyrics(lyrics.plainLyrics);
+        const { updatedStanza, removedWord, originalStanza } = processLyrics(lyrics.plainLyrics)
 
         quizData.push({
           questionNumber: quizData.length + 1,
@@ -85,11 +146,11 @@ export async function createLyricsQuizData(id) {
           artist: track.artist.name,
           album: track.album.title,
           image: track.album.cover_big,
-        });
+        })
       }
     }
 
-    return quizData;
+    return quizData
   } catch (error) {
     console.error(error)
   }
@@ -202,4 +263,16 @@ function processLyrics(plainLyrics) {
     removedWord,
     originalStanza: chosenStanza,
   };
+}
+
+
+export async function searchDeezerTrack(name, artist) {
+  const response = await fetch(`https://api.deezer.com/search?q=${name} ${artist}`)
+    .then((res) => res.json())
+
+  if (!response || !response.data || response.data.length === 0) {
+    return null
+  }
+
+  return response.data[0] // Return the best match
 }

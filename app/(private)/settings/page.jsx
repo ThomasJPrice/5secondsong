@@ -1,7 +1,18 @@
+import { getUser, getUserInfo } from '@/actions/login'
+import BooleanSetting from '@/components/shared/BooleanSetting'
+import SpotifyConnection from '@/components/shared/SpotifyConnection'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
 import React from 'react'
 
-const SettingsPage = () => {
+export const metadata = {
+  title: 'Settings | 5 Second Song'
+}
+
+const SettingsPage = async () => {
+ const userInfo = await getUser()
+
   return (
     <div className='container py-4'>
       <h1 className='font-primary text-center text-4xl md:text-5xl text-primary'>Settings</h1>
@@ -14,7 +25,14 @@ const SettingsPage = () => {
           </CardHeader>
 
           <CardContent>
-            hi
+            <div>
+              <BooleanSetting
+                initialValue={userInfo.settings?.now_playing}
+                name={'now_playing'}
+                title='Now Playing'
+                description='Display the song you are currently listening to on your profile.'
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -25,7 +43,7 @@ const SettingsPage = () => {
           </CardHeader>
 
           <CardContent>
-            hi
+            <SpotifyConnection />
           </CardContent>
         </Card>
 
@@ -36,7 +54,7 @@ const SettingsPage = () => {
           </CardHeader>
 
           <CardContent>
-            hi
+            <p className='text-gray-500'>Coming soon!</p>
           </CardContent>
         </Card>
       </section>

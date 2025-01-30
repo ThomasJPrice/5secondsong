@@ -72,7 +72,7 @@ export async function connectToSpotify() {
   }
 
 
-  if (new Date(spotify_expires_at) < new Date()) {
+  if (new Date(parseInt(spotify_expires_at)) < new Date()) {
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -107,4 +107,125 @@ export async function connectToSpotify() {
     }
   }
   
+}
+
+
+
+export async function getSpotifyNowPlaying() {
+  const connection = await connectToSpotify()
+
+  if (!connection) {
+    return null
+  }
+  
+  const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    headers: {
+      'Authorization': 'Bearer ' + connection.access_token
+    }
+  })
+
+  const data = await response.json()
+
+  if (data.error) {
+    return null
+  }
+
+  if (data.is_playing === false) {
+    return null
+  }
+
+  return {
+    songName: data.item.name,
+    artistName: data.item.artists[0].name,
+    albumArt: data.item.album.images[0].url
+  }
+}
+
+
+
+export async function getSpotifyPlaylists() {
+  const connection = await connectToSpotify()
+
+  if (!connection) {
+    return null
+  }
+
+  const response = await fetch('https://api.spotify.com/v1/me/playlists', {
+    headers: {
+      'Authorization': 'Bearer ' + connection.access_token
+    }
+  })
+
+  const data = await response.json()
+
+  if (data.error) {
+    console.log(data.error);
+    
+    return null
+  }
+
+  return data.items.map(item => {
+    return {
+      id: item.id,
+      name: item.name,
+      image: item.images ? item.images[0].url : null
+    }
+  })
+}
+
+
+
+
+export async function getPlaylistInfo(id) {
+  const connection = await connectToSpotify()
+
+  if (!connection) {
+    return null
+  }
+
+  const response = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+    headers: {
+      'Authorization': 'Bearer ' + connection.access_token
+    }
+  })
+
+  const data = await response.json()
+
+  if (data.error) {
+    return null
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+    image: data.images[0].url
+  }
+}
+
+export async function getPlaylistTracks(id) {
+  const connection = await connectToSpotify()
+
+  if (!connection) {
+    return null
+  }
+
+  const response = await fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+    headers: {
+      'Authorization': 'Bearer ' + connection.access_token
+    }
+  })
+
+  const data = await response.json()
+
+  if (!data.items) {
+    return null
+  }
+
+  return data.items
+    .map((item) => item.track)
+    .filter((track) => track) // Remove any null entries
+    .map((track) => ({
+      name: track.name,
+      artist: track.artists[0].name
+    }))
 }

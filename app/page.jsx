@@ -1,4 +1,5 @@
 import ArtistSelection from "@/components/shared/ArtistSelection";
+import GameStart from "@/components/shared/GameStart";
 import Navbar from "@/components/shared/Navbar";
 import Image from 'next/image'
 import Link from "next/link";
@@ -20,7 +21,8 @@ export default async function Home() {
                 <Image src='/logo-nobg.png' width={1208} height={564} alt="5 Second Song" className="max-w-[300px]" />
               </div>
 
-              <ArtistSelection />
+              {/* <ArtistSelection /> */}
+              <GameStart />
             </div>
           </div>
         </main>

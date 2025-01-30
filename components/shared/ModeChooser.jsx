@@ -9,7 +9,7 @@ import Image from 'next/image'
 const ModeChooser = ({ mode: chosenMode, setMode: setChosenMode }) => {
   return (
     <div className='flex flex-col items-center gap-8'>
-      <h2 className='text-center text-2xl text-primary font-primary'>2. Choose a mode:</h2>
+      <h2 className='text-center text-2xl text-primary font-primary'>Choose a mode:</h2>
 
       {/* modes */}
       <div className='flex flex-col md:flex-row gap-8'>

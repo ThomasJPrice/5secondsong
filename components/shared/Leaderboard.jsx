@@ -28,23 +28,29 @@ const Leaderboard = ({ entries, mode }) => {
               <TableRow key={entry.deezer_artist_id + `${index}`}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{
-                    userInfo ? (
-                      <div className="flex items-center space-x-3">
-                    <Link className="hover:underline" href={`/user/${userInfo.username}`}>{userInfo.username}</Link>
-                  </div>
-                    ) : 'Anonymous'
-                  }</TableCell>
+                  userInfo ? (
+                    <div className="flex items-center space-x-3">
+                      <Link className="hover:underline" href={`/user/${userInfo.username}`}>{userInfo.username}</Link>
+                    </div>
+                  ) : 'Anonymous'
+                }</TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-3">
-                    <div className="relative w-10 h-10 flex-shrink-0">
-                      <Image
-                        src={entry.artist_details.image}
-                        alt={`Image for ${entry.artist_details.name}`}
-                        fill
-                        className="rounded-full object-cover"
-                      />
-                    </div>
-                    <Link className="hover:underline" href={`/${mode}/${entry.deezer_artist_id}`}>{entry.artist_details.name}</Link>
+                    {entry.source === 'artist' ? (
+                      <>
+                        <div className="relative w-10 h-10 flex-shrink-0">
+                          <Image
+                            src={entry.artist_details.image}
+                            alt={`Image for ${entry.artist_details.name}`}
+                            fill
+                            className="rounded-full object-cover"
+                          />
+                        </div>
+                        <Link className="hover:underline" href={`/${mode}/${entry.deezer_artist_id}`}>{entry.artist_details.name}</Link>
+                        </>
+                    ) : (
+                      <p>User's Playlist</p>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell className="text-right">{entry?.score}</TableCell>

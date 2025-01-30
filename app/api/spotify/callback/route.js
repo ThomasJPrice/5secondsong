@@ -49,7 +49,7 @@ export async function GET(request) {
       .update({
         spotify_access_token: data.access_token,
         spotify_refresh_token: data.refresh_token,
-        spotify_expires_at: new Date().getTime() + data.expires_in * 1000
+        spotify_expires_at: new Date().getTime() + (data.expires_in * 1000)
       })
       .match({ id: user.id })
     

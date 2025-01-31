@@ -51,7 +51,7 @@ const SpotifyConnection = () => {
         <Image src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png" alt="Spotify" width={48} height={48} />
         <div className="flex-1">
           <CardTitle>Spotify</CardTitle>
-          <CardDescription className='mt-1'>Utilise features like quizzing with your Spotify playlists (coming soon!)</CardDescription>
+          <CardDescription className='mt-1'>Utilise features like quizzing with your Spotify playlists</CardDescription>
         </div>
       </CardHeader>
       <CardFooter className='mt-4'>

@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from '@/utils/supabase/server';
 import { cookies } from "next/headers"
 
-export async function handleQuizSubmit({ deezer_artist_id, artist_details, score, time, mode }) {
+export async function handleQuizSubmit({ deezer_artist_id, artist_details, score, time, mode, source }) {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
 
@@ -22,7 +22,8 @@ export async function handleQuizSubmit({ deezer_artist_id, artist_details, score
         score: score,
         time: time,
         mode: mode,
-        user_id: user ? user.id : null
+        user_id: user ? user.id : null,
+        source: source
       })
       .select()
       .single()

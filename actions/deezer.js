@@ -121,34 +121,31 @@ export async function createLyricsQuizData(id, source) {
       }
     }
 
-    // Shuffle tracks
+    // Shuffle tracks and take up to 30 candidates to fetch lyrics in parallel
     const shuffledTracks = tracks.sort(() => Math.random() - 0.5)
-    let quizData = []
+    const candidates = shuffledTracks.slice(0, 30)
 
-    while (quizData.length < 10) {
-      const track = shuffledTracks.pop()
-
-      if (!track) {
-        break
-      }
-
-      const lyrics = await fetchLyrics(track.title, track.artist.name, track.album.title, track.duration)
-
-      if (lyrics?.plainLyrics) {
+    const results = await Promise.all(
+      candidates.map(async (track) => {
+        const lyrics = await fetchLyrics(track.title, track.artist.name, track.album.title, track.duration)
+        if (!lyrics?.plainLyrics) return null
         const { updatedStanza, removedWord, originalStanza } = processLyrics(lyrics.plainLyrics)
-
-        quizData.push({
-          questionNumber: quizData.length + 1,
-          updatedStanza: updatedStanza,
-          removedWord: removedWord,
-          originalStanza: originalStanza,
+        return {
+          updatedStanza,
+          removedWord,
+          originalStanza,
           title: track.title,
           artist: track.artist.name,
           album: track.album.title,
           image: track.album.cover_big,
-        })
-      }
-    }
+        }
+      })
+    )
+
+    const quizData = results
+      .filter(Boolean)
+      .slice(0, 10)
+      .map((item, index) => ({ ...item, questionNumber: index + 1 }))
 
     return quizData
   } catch (error) {
@@ -196,7 +193,15 @@ export async function getArtistInfo(id) {
 
 export async function fetchLyrics(title, artist, album, duration) {
   try {
-    const response = await fetch(`https://lrclib.net/api/get?artist_name=${artist}&track_name=${title}&album_name=${album}&duration=${duration}`)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 4000)
+
+    const response = await fetch(
+      `https://lrclib.net/api/get?artist_name=${artist}&track_name=${title}&album_name=${album}&duration=${duration}`,
+      { signal: controller.signal }
+    )
+
+    clearTimeout(timeoutId)
 
     const data = await response.json()
 
@@ -206,7 +211,10 @@ export async function fetchLyrics(title, artist, album, duration) {
       throw new Error('No lyrics found')
     }
   } catch (error) {
-    console.error('Error fetching lyrics', title, artist)
+    if (error.name !== 'AbortError') {
+      console.error('Error fetching lyrics', title, artist)
+    }
+    return null
   }
 }
 
